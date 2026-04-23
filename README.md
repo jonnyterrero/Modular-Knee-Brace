@@ -114,5 +114,6 @@ The MK-Brace is designed for:
 | `docs/` | Course write-up: `EGN-3433C-Design-Project-Final.docx` |
 | `cad/` | Top-level release assembly: `finalkneeassem4.SLDASM` |
 | `modular-knee-brace-package/` | Complete design hand-off: instruction PDF, SolidWorks assemblies and parts, STL print files, and simulation artifacts (`files/`, including `.CWR` and related solver files) |
+| `resources/` | Pointers to external learning repos, [GrabCAD](https://grabcad.com/), and [SolidWorks Python tooling](https://github.com/Glutenberg/swtoolkit) (see `resources/README.md`) |
 
 Large CAD, meshes, and simulation results are stored with **Git LFS**; clone with [Git LFS](https://git-lfs.com/) installed so pointers resolve to real files.
