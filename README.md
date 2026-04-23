@@ -1,5 +1,7 @@
 # Modular Knee Brace (MK-Brace)
 
+![CAD render of the modular knee brace frame (isometric view)](docs/images/mk-brace-cad-render.png)
+
 ## Overview
 The Modular Knee Brace (MK-Brace) is a lightweight, 3D-printed, parametric rehabilitation device designed to provide joint support, improve comfort, and enable biomechanical data collection.
 
@@ -111,7 +113,7 @@ The MK-Brace is designed for:
 
 | Path | Contents |
 | --- | --- |
-| `docs/` | Course write-up: `EGN-3433C-Design-Project-Final.docx` |
+| `docs/` | Course write-up: `EGN-3433C-Design-Project-Final.docx`; README hero image: `images/mk-brace-cad-render.png` |
 | `cad/` | Top-level release assembly: `finalkneeassem4.SLDASM` |
 | `modular-knee-brace-package/` | Complete design hand-off: instruction PDF, SolidWorks assemblies and parts, STL print files, and simulation artifacts (`files/`, including `.CWR` and related solver files) |
 | `resources/` | Pointers to external learning repos, [GrabCAD](https://grabcad.com/), and [SolidWorks Python tooling](https://github.com/Glutenberg/swtoolkit) (see `resources/README.md`) |
