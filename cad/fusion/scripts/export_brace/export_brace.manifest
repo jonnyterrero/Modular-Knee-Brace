@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Jonny Terrero",
+  "description": {
+    "": "Exports the brace as a Fusion archive, STEP assembly, per-part STLs (mm) and preview renders into this repository."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

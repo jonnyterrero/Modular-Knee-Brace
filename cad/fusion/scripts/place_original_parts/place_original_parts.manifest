@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Jonny Terrero",
+  "description": {
+    "": "Copies the original SolidWorks connectors and hinges from 'Knee brace Design / SolidWorks originals' and places them around the knee axis."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

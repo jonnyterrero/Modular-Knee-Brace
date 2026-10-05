@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Jonny Terrero",
+  "description": {
+    "": "Builds the parametric Top and Bottom frames of the Modular Knee Brace (run in an empty design)."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

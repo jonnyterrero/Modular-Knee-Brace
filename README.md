@@ -37,10 +37,24 @@ The current version is a **passive modular brace with planned sensor integration
 - Comfort interface: TPU / soft padding + Velcro straps
 
 ### Manufacturing
-- Designed in SolidWorks
-- Exported as STL files
+- Designed in SolidWorks; rebuilt as a parametric Fusion 360 model (2026)
+- Exported as STL files (`cad/fusion/stl/`, millimetres)
 - Fabricated via FDM 3D printing
 - Post-processing includes support removal and adhesive reinforcement
+
+---
+
+## Fusion 360 Model
+
+![Fusion 360 assembly of the MK-Brace](docs/images/fusion/assembly-iso.png)
+
+The brace was rebuilt in Fusion 360 from the final SolidWorks parts (October 2026):
+
+- **Frames:** native and fully parametric. Thigh and calf fit, wrap angle, socket fit and strap geometry are named parameters.
+- **Connectors and hinges:** exact copies of the original SolidWorks parts, positioned around the knee axis.
+- **Verified fit** at every joint; corrections to the originals are documented in [`docs/fusion-rebuild.md`](docs/fusion-rebuild.md).
+
+Files, parameters and build scripts: [`cad/fusion/`](cad/fusion/README.md). Current status and next steps: [`HANDOFF.md`](HANDOFF.md).
 
 ---
 
@@ -102,10 +116,10 @@ The MK-Brace is designed for:
 ---
 
 ## Current Status
-- Mechanical design: In progress
-- Prototype fabrication: Active
-- Embedded system: Planned
-- Software stack: Not yet implemented
+- Mechanical design: Fusion 360 rebuild complete (10-part parametric assembly, fit verified)
+- Prototype fabrication: Print files ready in `cad/fusion/stl/`
+- Embedded system: Next: sensors, battery and schematics (see `HANDOFF.md`)
+- Software stack: Fusion API build and export scripts in `cad/fusion/scripts/`; firmware not started
 
 ---
 
@@ -113,8 +127,11 @@ The MK-Brace is designed for:
 
 | Path | Contents |
 | --- | --- |
-| `docs/` | Course write-up: `EGN-3433C-Design-Project-Final.docx`; README hero image: `images/mk-brace-cad-render.png` |
+| `docs/` | Course write-up `EGN-3433C-Design-Project-Final.docx`; images in `images/`; dimensioned drawings and design sketches in `drawings/`; FEA report in `simulation/`; rebuild notes `fusion-rebuild.md`; session logs in `progress/` |
 | `cad/` | Top-level release assembly: `finalkneeassem4.SLDASM` |
+| `cad/fusion/` | Fusion 360 model: `.f3d` archive, STEP assembly, per-part STLs (mm) and Fusion API scripts |
+| `cad/solidworks-final/` | Final SolidWorks parts, assemblies and drawings the Fusion model was rebuilt from |
+| `HANDOFF.md`, `AGENTS.md`, `CLAUDE.md` | Current state and next steps; instructions for AI agents |
 | `modular-knee-brace-package/` | Complete design hand-off: instruction PDF, SolidWorks assemblies and parts, STL print files, and simulation artifacts (`files/`, including `.CWR` and related solver files) |
 | `resources/` | Pointers to external learning repos, [GrabCAD](https://grabcad.com/), and [SolidWorks Python tooling](https://github.com/Glutenberg/swtoolkit) (see `resources/README.md`) |
 
