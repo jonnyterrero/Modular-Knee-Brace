@@ -1,6 +1,6 @@
 # Handoff — where the MK-Brace work stands
 
-_Last updated 2026-10-04 by Claude Code (Opus 5.5). Full session log: [`docs/progress/2026-10-04-fusion-rebuild.md`](docs/progress/2026-10-04-fusion-rebuild.md)._
+_Last updated 2026-10-20 by Claude Code (Opus 5.5). Full session log: [`docs/progress/2026-10-04-fusion-rebuild.md`](docs/progress/2026-10-04-fusion-rebuild.md)._
 
 Read this first when picking the project back up, and update it at the end of every session.
 
@@ -11,20 +11,15 @@ Read this first when picking the project back up, and update it at the end of ev
 - **Repo:** exports and scripts in [`cad/fusion/`](cad/fusion/README.md); engineering notes in [`docs/fusion-rebuild.md`](docs/fusion-rebuild.md); the reference SolidWorks set in [`cad/solidworks-final/`](cad/solidworks-final/); drawings in [`docs/drawings/`](docs/drawings/).
 - **Print-ready:** `cad/fusion/stl/` (millimetres). Print the Outer Hinge twice.
 
-## Next up (week of 2026-10-05): electronics
+## Next up: electronics (Phase 2, sensing)
 
-The README's Phase 2/3 plan: ESP32, a magnetic rotary encoder at the hinge (knee angle), dual IMUs (thigh + shin), pressure sensors (fit and load), a LiPo battery, BLE/USB.
+Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split placement** (MCU, encoder and shin IMU at the lateral hinge; LiPo on the thigh frame), **PETG** prototype. Parts, pin map and power budget are in [`electronics/README.md`](electronics/README.md): XIAO ESP32-S3, AS5600 + Ø6 mm diametric magnet on the hinge axis, 2× LSM6DSOX, 4× FSR 402, 1000 mAh protected 1S LiPo (~43 mA design load, ~18 h expected).
 
-1. Choose parts and write a power budget (target runtime → battery capacity).
-2. Draw the schematics in KiCad (an MCP server is configured on the dev machine) or Fusion Electronics, under a new `electronics/` folder.
-3. Design the mounts in Fusion. The report puts add-ons at the hinges first, so start with the encoder on the hinge axis and an enclosure for the MCU and battery.
-4. Update this file, add a `docs/progress/` entry, and commit to `main`.
-
-Open questions:
-
-- Is electrical-stimulation (e-stim) therapy in scope? The report mentions an e-stim battery pack. Anything patient-connected is safety-critical: keep it a separate, isolated module and decide before designing the power system.
-- Target runtime per charge, and where the battery and MCU should sit (thigh frame or hinge).
-- Material for the first printed prototype (README: PLA/PETG now, nylon or carbon fibre later).
+1. ~~Choose parts and write a power budget.~~ Done.
+2. Draw the schematic in KiCad (MCP server configured on the dev machine) under `electronics/`.
+3. Design the mounts in Fusion: magnet pocket in the Inner Hinge boss tip, a thin-floor sensor pocket in the Outer Hinge cap (≤ 0.03 in floor), the lateral hinge enclosure, and a curved battery holder on the thigh frame that stays clear of the strap recess.
+4. Bench-measure the ESP32-S3 + BLE current; the 35 mA figure is an estimate.
+5. Update this file, add a `docs/progress/` entry, and commit to `main`.
 
 ## Resume on the desktop
 
