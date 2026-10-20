@@ -35,3 +35,12 @@ Read from the Fusion bodies. The hinge axis is lateral. The Inner Hinge (thigh s
 ## Next
 
 Fusion mounts (magnet pocket, cap pocket, hinge enclosure, battery holder), bench current measurement, then PCB layout. See `HANDOFF.md`.
+
+## 6. Design review → rev B (paused mid-way)
+
+The user brought in an external review of the schematic. Changes made:
+- Power switch and a new PTC fuse moved to the cell, so the harness is dead when the brace is off.
+- AS5600 DIR tied to GND.
+- FSR series resistors added, so the ADC input stays inside its 0–2.9 V range.
+
+The supply wiring the reviewer queried (VDD5V tied to VDD3V3) matches the AS5600 datasheet. ERC: 0 errors. The remaining rev B items and the confirmed datasheet facts are listed in `HANDOFF.md`. Paused at the user's request to resume later.

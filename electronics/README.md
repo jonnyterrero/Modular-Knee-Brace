@@ -45,7 +45,9 @@ Parts selection, architecture, power budget and schematic for the first sensing 
 | BT1 | 1S LiPo 1000 mAh with protection circuit (PCM), ~50 × 34 × 5 mm (503450 size) | 1 | **Must** have a PCM. ~20 g. |
 | J1, J3 | JST-PH 8-pin | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_RAW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
 | J2 | JST-PH 3-pin | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
-| SW1 | Slide switch in BAT+ | 1 | Hard power-off for storage and transport, on the hinge board. |
+| SW1 | Slide switch in BAT+ | 1 | Hard power-off, at the cell on the thigh side (rev B), so the harness is dead when off. |
+| F1 | PTC resettable fuse, 0.5 A hold, 1206 | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
+| R9–R12 | 1.5 kΩ | 4 | FSR series resistors (rev B): cap the ADC input at 2.87 V and limit harness fault current. |
 | — | 8-core silicone ribbon or 28 AWG silicone wire | ~0.5 m | Thigh-to-hinge bundle. |
 
 ## Pin map (XIAO ESP32-S3)
@@ -59,7 +61,7 @@ Parts selection, architecture, power budget and schematic for the first sensing 
 | D4 | 5 | I2C SDA |
 | D5 | 6 | I2C SCL |
 | D6 | 43 | FSR_EN: powers the FSR dividers only while sampling |
-| D7 | 44 | ENC_DIR → AS5600 DIR (sets which rotation direction counts up) |
+| D7 | 44 | Spare. Rev B ties AS5600 DIR to GND (the datasheet says GND or VDD, and a GPIO floats during boot); invert direction in firmware. |
 | D8 / A8 | 7 | FSR_C2 (ADC1) |
 | D9 | 8 | Spare. The thigh IMU's INT1 is not routed, to keep the harness at 8 conductors; firmware polls it over I2C. |
 | D10 | 9 | Shin IMU INT1 |
