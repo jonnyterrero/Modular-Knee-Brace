@@ -6,3 +6,11 @@ Desktop.ini
 *.tmp
 __pycache__/
 *.pyc
+
+# KiCad local state and backups
+*.kicad_prl
+.mcp-backups/
+*-backups/
+fp-info-cache
+_autosave-*
+*.lck

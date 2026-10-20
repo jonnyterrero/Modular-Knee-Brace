@@ -1,6 +1,6 @@
 # Handoff — where the MK-Brace work stands
 
-_Last updated 2026-10-20 by Claude Code (Opus 5.5). Full session log: [`docs/progress/2026-10-04-fusion-rebuild.md`](docs/progress/2026-10-04-fusion-rebuild.md)._
+_Last updated 2026-10-20 by Claude Code (Opus 5.5). Session logs: [`docs/progress/`](docs/progress/) (latest: [`2026-10-20-electronics-plan-and-schematic.md`](docs/progress/2026-10-20-electronics-plan-and-schematic.md))._
 
 Read this first when picking the project back up, and update it at the end of every session.
 
@@ -16,7 +16,7 @@ Read this first when picking the project back up, and update it at the end of ev
 Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split placement** (MCU, encoder and shin IMU at the lateral hinge; LiPo on the thigh frame), **PETG** prototype. Parts, pin map and power budget are in [`electronics/README.md`](electronics/README.md): XIAO ESP32-S3, AS5600 + Ø6 mm diametric magnet on the hinge axis, 2× LSM6DSOX, 4× FSR 402, 1000 mAh protected 1S LiPo (~43 mA design load, ~18 h expected).
 
 1. ~~Choose parts and write a power budget.~~ Done.
-2. Draw the schematic in KiCad (MCP server configured on the dev machine) under `electronics/`.
+2. ~~Draw the schematic in KiCad.~~ Done: [`electronics/kicad/`](electronics/kicad/), PDF in `electronics/`, ERC 0 errors. Before layout: in KiCad run *Tools → Update Symbols from Library*, check the three project symbols against their datasheets, and assign a XIAO footprint.
 3. Design the mounts in Fusion: magnet pocket in the Inner Hinge boss tip, a thin-floor sensor pocket in the Outer Hinge cap (≤ 0.03 in floor), the lateral hinge enclosure, and a curved battery holder on the thigh frame that stays clear of the strap recess.
 4. Bench-measure the ESP32-S3 + BLE current; the 35 mA figure is an estimate.
 5. Update this file, add a `docs/progress/` entry, and commit to `main`.

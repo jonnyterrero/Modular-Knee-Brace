@@ -1,6 +1,6 @@
 # Electronics — Phase 2 (sensing)
 
-Parts selection, architecture and power budget for the first sensing build. Schematics (KiCad) and firmware come next and go in this folder.
+Parts selection, architecture, power budget and schematic for the first sensing build. Firmware comes next and goes in this folder.
 
 ## Scope decisions (2026-10-20)
 
@@ -34,16 +34,18 @@ Parts selection, architecture and power budget for the first sensing build. Sche
 | Ref | Part | Qty | Role / notes |
 | --- | --- | --- | --- |
 | U1 | Seeed XIAO ESP32-S3 | 1 | MCU, BLE 5, native USB-C, onboard 1S LiPo charger. 21 × 17.8 mm. |
-| U2 | ams AS5600 breakout (or bare SOIC-8 on the hinge board) | 1 | 12-bit magnetic angle sensor, I2C 0x36. Run at 3.3 V (VDD5V tied to VDD3V3). |
+| U2 | ams AS5600, SOIC-8 | 1 | 12-bit magnetic angle sensor, I2C 0x36. Run at 3.3 V (VDD5V tied to VDD3V3). A breakout board is fine for the first bench test. |
 | M1 | Diametric NdFeB magnet, Ø6 × 2.5 mm | 1 | Pressed into the Inner Hinge boss tip, centred on the axis. |
-| U3, U4 | ST LSM6DSOX 6-axis IMU breakout | 2 | Thigh (SA0 = 0 → 0x6A, remote) and shin (SA0 = 1 → 0x6B, on the hinge board). |
+| U3, U4 | ST LSM6DSOX 6-axis IMU, LGA-14 | 2 | Shin (U3, SA0 = 1 → 0x6B, on the hinge board) and thigh (U4, SA0 = 0 → 0x6A, small thigh board). Breakouts are fine for the first bench test. |
+| C1–C7 | 100 nF ×6, 1 µF ×1 | 7 | Decoupling: C1/C2 on U2, C3/C4 on U3, C6/C7 on U4; C5 filters VBAT_SENSE. |
 | S1–S4 | Interlink FSR 402 (Ø12.7 mm active) | 4 | Fit/load pads: 2 on the thigh band inner face, 2 on the calf band. |
 | R1–R4 | 10 kΩ | 4 | FSR divider legs to GND. |
 | R5, R6 | 220 kΩ | 2 | VBAT divider (½ scale), ~10 µA drain. 100 nF from the midpoint to GND. |
 | R7, R8 | 2.2 kΩ | 2 | I2C pull-ups (cable to the thigh IMU adds capacitance; 400 kHz). |
 | BT1 | 1S LiPo 1000 mAh with protection circuit (PCM), ~50 × 34 × 5 mm (503450 size) | 1 | **Must** have a PCM. ~20 g. |
-| J1 | JST-PH 2-pin | 1 | Battery disconnect at the hinge enclosure. |
-| SW1 | Slide switch in BAT+ | 1 | Hard power-off for storage and transport. |
+| J1, J3 | JST-PH 8-pin | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_RAW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
+| J2 | JST-PH 3-pin | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
+| SW1 | Slide switch in BAT+ | 1 | Hard power-off for storage and transport, on the hinge board. |
 | — | 8-core silicone ribbon or 28 AWG silicone wire | ~0.5 m | Thigh-to-hinge bundle. |
 
 ## Pin map (XIAO ESP32-S3)
@@ -57,12 +59,22 @@ Parts selection, architecture and power budget for the first sensing build. Sche
 | D4 | 5 | I2C SDA |
 | D5 | 6 | I2C SCL |
 | D6 | 43 | FSR_EN: powers the FSR dividers only while sampling |
-| D7 | 44 | AS5600 DIR (or spare) |
+| D7 | 44 | ENC_DIR → AS5600 DIR (sets which rotation direction counts up) |
 | D8 / A8 | 7 | FSR_C2 (ADC1) |
-| D9 | 8 | Thigh IMU INT1 |
+| D9 | 8 | Spare. The thigh IMU's INT1 is not routed, to keep the harness at 8 conductors; firmware polls it over I2C. |
 | D10 | 9 | Shin IMU INT1 |
 
 All analog inputs are on ADC1, which keeps working while BLE is active. ADC2 conflicts with the radio.
+
+## Schematic
+
+- KiCad 10 project: [`kicad/mk-brace-sensing.kicad_pro`](kicad/mk-brace-sensing.kicad_pro), one sheet. PDF: [`mk-brace-sensing-schematic.pdf`](mk-brace-sensing-schematic.pdf).
+- The sheet is split into the hinge board, the thigh side of the harness and the calf FSRs. Parts connect by net label; J1 and J3 are the two ends of the same 8-way harness.
+- Project symbols for the XIAO ESP32-S3, AS5600 and LSM6DSOX are in [`kicad/MKBrace.kicad_sym`](kicad/MKBrace.kicad_sym); KiCad's stock library has none of them. Check their pinouts against the datasheets before PCB layout. The XIAO has no footprint assigned yet.
+- ERC (2026-10-20): 0 errors, 21 warnings, all expected:
+  - 15 × "symbol doesn't match copy in library": the KiCad MCP server embedded its own copies of `Device:R` / `Device:C`. Fix in KiCad with *Tools → Update Symbols from Library*.
+  - 6 × "bidirectional connected to power output": the IMUs' SA0 and unused aux-I2C pins (SDx, SCx) tied to 3V3 or GND on purpose.
+- The KiCad MCP server's library *search* finds nothing on KiCad 10. It only knows the 8.0/9.0 install paths and cuts URIs at spaces (`C:/Program Files/...`). Placing parts by `Library:Symbol` name still works.
 
 ## Power budget
 
