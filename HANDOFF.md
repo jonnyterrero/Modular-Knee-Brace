@@ -37,8 +37,7 @@ Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split pla
      - ERC still 0 errors; netlist re-checked; PDF re-exported.
    - Still to do:
      - Verify the LSM6DSOX pinout against ST's DS12814 (a person needs to download it; st.com blocks scripted access). It has only been checked against the LSM6DSO's AN5192 Table 1.
-     - Decide how the battery charges (`electronics/README.md`). The XIAO's own charger is about 50–100 mA, so 10–20+ hours on 1000 mAh.
-     - Choose the exact PTC and battery cell.
+     - Choose the exact PTC, battery cell and charger. Charging is decided: unplug the cell at J4 and charge off the brace (`electronics/README.md`).
      - Then split the sheet into separate boards for the full build (hinge board, thigh board).
      - Also done since: XIAO battery pads corrected to 23/24 with Seeed's footprint, ERC down to the 6 intended warnings, checklist in `electronics/README.md`.
    - Datasheet facts confirmed so far:

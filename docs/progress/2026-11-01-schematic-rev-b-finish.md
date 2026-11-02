@@ -13,7 +13,7 @@ Claude Code (Opus 5.5). Follows the external design review logged in `2026-10-20
 
 ## Findings
 
-- **The XIAO's charger is too slow for this cell.** It is an SGM40567, listed at about 50 mA on Seeed's wiki for this board (the table is ambiguous; resellers say 50 or 100 mA). That is roughly 10–20+ hours for 1000 mAh. Options are in the README; not decided yet.
+- **The XIAO's charger is too slow for this cell.** It is an SGM40567, listed at about 50 mA on Seeed's wiki for this board (the table is ambiguous; resellers say 50 or 100 mA). That is roughly 10–20+ hours for 1000 mAh. Decided the same day: the cell unplugs at J4 and charges off the brace with a 500 mA charger.
 - **The magnet axis must sit within 0.25 mm of the AS5600 package centre** (datasheet).
 
 ## Checks
@@ -25,5 +25,5 @@ A tidy script of mine damaged the schematic during this session by matching too 
 ## Still open
 
 - Check the LSM6DSOX pinout against ST's DS12814. st.com blocks scripted access, and the mirrors tried either failed or held a different part. It has only been checked against the sister LSM6DSO (AN5192).
-- Choose how the battery charges, the exact PTC and the cell.
+- Choose the exact PTC, cell and charger.
 - Split the sheet into separate boards for the full build.

@@ -48,7 +48,8 @@ Parts selection, architecture, power budget and schematic for the first sensing 
 | J2 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
 | SW1 | Slide switch in BAT+ | 1 | Hard power-off, at the cell on the thigh side (rev B), so the harness is dead when off. |
 | F1 | PTC resettable fuse, 0.5 A hold, 1206 (exact part to be chosen) | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
-| J4 | JST-PH 2-pin (B2B-PH-K-S) | 1 | Battery plug on the thigh side, so the cell can be unplugged. |
+| J4 | JST-PH 2-pin (B2B-PH-K-S) | 1 | Battery plug on the thigh side, so the cell can be unplugged to charge. |
+| — | Single-cell LiPo charger, 4.2 V CC/CV, 500 mA, JST-PH lead (off-brace, not on the schematic) | 1 | Charges the cell off the brace. Check polarity first. |
 | R9–R12 | 1.5 kΩ | 4 | FSR series resistors (rev B): cap the ADC input at 2.87 V and limit harness fault current. |
 | — | 8-core silicone ribbon or 28 AWG silicone wire | ~0.5 m | Thigh-to-hinge bundle. |
 
@@ -92,7 +93,7 @@ From the external design review (rev A), updated for rev B.
 | LSM6DSOX symbol and footprint vs. purchased part | **Partly verified.** Pin numbers and unused-pin handling match ST's AN5192 for the sister LSM6DSO. **Open:** check against ST's LSM6DSOX datasheet (DS12814); st.com blocks scripted downloads. |
 | XIAO pins 1–14 | **Verified** against Seeed's KiCad symbol and footprint. D0–D3 and D8 are ADC1-capable per Seeed's pin map. |
 | XIAO battery pads | **Verified and corrected in rev B** to pads 23 (VBAT) and 24 (GND). |
-| Switch and charging behaviour | **Open:** charging decision below. Battery PCM ratings are unknown until a cell is chosen. |
+| Switch and charging behaviour | **Decided:** the cell charges off the brace, unplugged at J4. **Open:** battery PCM ratings are unknown until a cell is chosen. |
 | Connector pin 1, polarization, strain relief | **Partly done:** JST-PH is keyed. Pin-1 marking is a layout item, strain relief a mechanical one. |
 | KiCad ERC | **Done:** 0 errors, 6 intended warnings. |
 | FSR outputs at min and max resistance | **Calculated:** 0 V open, 2.82 V at 200 Ω (2.87 V at 0 Ω), inside the 0–2.9 V range at 12 dB. Bench-check with real sensors. |
@@ -104,13 +105,13 @@ From the external design review (rev A), updated for rev B.
 
 The 3.5 V firmware cutoff is a low-battery warning, not protection; the cell's PCM is the hardware protection. Voltage under load reads lower than resting voltage.
 
-## Open decision: how the battery charges
+## Charging (decided 2026-11-01)
 
-The XIAO's charger would take roughly 10–20+ hours on a 1000 mAh cell, and it also means plugging USB in at the hinge. Options:
+**Unplug the cell at J4 and charge it off the brace** with a separate charger. The XIAO's own charger would take roughly 10–20+ hours on a 1000 mAh cell, and this way the brace can't be charging while worn.
 
-1. **Unplug the cell at J4 and charge it off the brace** with a 500 mA single-cell charger. No schematic change, and it can't happen while worn. (Recommended for the prototype.)
-2. **Add a dedicated charger on the thigh board** next to the cell, with its own USB port. Charges in the brace, adds parts.
-3. **Accept the slow charge** for early bench work only.
+- **Charger:** single-cell LiPo, CC/CV to 4.2 V, 500 mA (0.5C for 1000 mAh, about 2–2.5 hours). Don't use a charger set above 1C (1 A).
+- **Polarity:** JST-PH battery wiring isn't standardized between vendors. Check the cell's polarity with a meter against J4 and against the charger before the first connection. A reversed cell can destroy the electronics or the cell.
+- **USB during firmware work:** the XIAO's charger will still top up the cell slowly if USB is plugged in with SW1 on. That's fine on the bench, but turn SW1 off or unplug J4 if you don't want that. Never do it while worn.
 
 ## Power budget
 
@@ -132,7 +133,7 @@ Sizing:
 - × 1.3 margin on the MCU estimate = **~850 mAh → 1000 mAh cell**
 - Expected runtime at the design load: 1000 × 0.8 / 43 ≈ **18 h**, or about 12 h even if the MCU draws 60 mA.
 
-Charging: the XIAO's onboard charger is a small linear charger. Seeed's wiki table appears to list 50 mA for this board and 100 mA for the Plus, and resellers disagree, so measure it. A 1000 mAh cell would take roughly 10–20+ hours that way, which is not practical for daily use. See the open decision below.
+Charging: the XIAO's onboard charger is a small linear charger. Seeed's wiki table appears to list 50 mA for this board and 100 mA for the Plus, and resellers disagree. Either way it's too slow for daily use, so the cell charges off the brace; see *Charging* above.
 
 ## Mechanical integration (input to the Fusion mount design)
 
