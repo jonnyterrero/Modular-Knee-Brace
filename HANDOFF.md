@@ -21,7 +21,7 @@ Open:
 - There is no slicer on the dev machine, so nothing has been sliced or printed. Print one hinge pair first.
 - The 180° frame wrap has not been checked on the wearer.
 
-Electronics is paused until this is proven.
+Electronics continues in parallel; the mount design waits on a printed hinge pair.
 
 ## Next up: electronics (Phase 2, sensing)
 
@@ -29,18 +29,18 @@ Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split pla
 
 1. ~~Choose parts and write a power budget.~~ Done.
 2. ~~Draw the schematic in KiCad.~~ Done: [`electronics/kicad/`](electronics/kicad/), PDF in `electronics/`, ERC 0 errors. Before layout: in KiCad run *Tools → Update Symbols from Library*, check the three project symbols against their datasheets, and assign a XIAO footprint.
-   **Rev B (2026-10-20, paused mid-way)** after an external design review:
+   **Rev B (2026-10-20, finished 2026-11-01 apart from the items below)** after an external design review:
    - Done:
      - SW1 and a PTC fuse (F1) moved to the cell, so the harness is dead when off.
      - AS5600 DIR tied to GND; D7 is now spare.
      - 1.5 kΩ series resistors (R9–R12) on the FSR lines. Without them a hard press reads above the ADC's 2.9 V range at 12 dB.
      - ERC still 0 errors; netlist re-checked; PDF re-exported.
    - Still to do:
-     - Clear the 15 library-mismatch warnings (*Update Symbols from Library*).
-     - Verify the LSM6DSOX pinout against ST's DS12814. It was checked only against the pin-compatible LSM6DSO (AN5192 Table 1), because st.com blocks scripted downloads.
-     - Confirm the XIAO battery pads, charge current (Seeed lists 50 or 100 mA) and footprint.
-     - Write the review's pre-fabrication checklist into `electronics/README.md`.
-     - Then start the full-build schematics.
+     - Verify the LSM6DSOX pinout against ST's DS12814 (a person needs to download it; st.com blocks scripted access). It has only been checked against the LSM6DSO's AN5192 Table 1.
+     - Decide how the battery charges (`electronics/README.md`). The XIAO's own charger is about 50–100 mA, so 10–20+ hours on 1000 mAh.
+     - Choose the exact PTC and battery cell.
+     - Then split the sheet into separate boards for the full build (hinge board, thigh board).
+     - Also done since: XIAO battery pads corrected to 23/24 with Seeed's footprint, ERC down to the 6 intended warnings, checklist in `electronics/README.md`.
    - Datasheet facts confirmed so far:
      - AS5600 (Infineon-hosted ams datasheet): in 3.3 V mode tie VDD5V and VDD3V3 together with 100 nF. 10 µF is needed only for OTP programming. Airgap 0.5–3 mm. **Magnet axis within 0.25 mm of package centre** (drives the Fusion mount tolerance). STATUS register 0x0B holds MD/ML/MH.
      - ESP32-S3: default GPIO drive 20 mA. ADC range at 12 dB is 0–2.9 V. GPIO3's strap only matters with JTAG eFuses set.

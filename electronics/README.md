@@ -16,7 +16,7 @@ Parts selection, architecture, power budget and schematic for the first sensing 
 ```
             THIGH SEGMENT                    │ joint │            SHIN SEGMENT
                                              │       │
-  [1S LiPo 1000 mAh, PCM] ──BAT+/GND─────────┼──┐    │
+  [1S LiPo 1000 mAh, PCM]─J4─F1─SW1─VBAT_SW/GND┼──┐    │
   [Thigh IMU LSM6DSOX 0x6A] ──3V3/GND/SDA/SCL┼──┤    │  Hinge enclosure (on Outer Hinge cap)
   [FSR T1] [FSR T2] ──FSR_EN/T1/T2───────────┼──┤    │   ├─ XIAO ESP32-S3 (MCU, BLE, USB-C, charger)
                                              │  └────┼──►├─ AS5600 encoder (on hinge axis)
@@ -25,28 +25,30 @@ Parts selection, architecture, power budget and schematic for the first sensing 
                                              │       │  [FSR C1] [FSR C2] ── local wiring
 ```
 
-- **Knee angle** comes straight from the encoder: the magnet turns with the thigh side (Inner Hinge), and the sensor rides on the shin side (Outer Hinge).
+- **Knee angle** comes straight from the encoder: the magnet turns with the thigh side (Inner Hinge), and the sensor rides on the shin side (Outer Hinge). This measures brace hinge rotation, which can differ from true knee flexion through brace migration, hinge misalignment and soft-tissue movement. Measure that difference during validation.
+- **Pressure pads** indicate relative contact (is it worn, how loading shifts between pads, strap changes). FSR 402s are nonlinear with hysteresis, so don't report the readings as absolute pressure or joint load.
 - **The shin IMU sits on the hinge board.** The Outer Hinge is rigid with the calf frame, so the board's orientation is the shin's orientation, and one cable run goes away.
-- **8 conductors cross the joint:** BAT+, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. Route them as one silicone-jacketed bundle with a service loop close to the hinge axis, where flexion changes cable length least.
+- **8 conductors cross the joint:** VBAT_SW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. VBAT_SW is switched and fused at the cell, so it carries no battery voltage with SW1 off. (3V3 can still be live if USB is plugged in.) Route them as one silicone-jacketed bundle with a service loop close to the hinge axis, where flexion changes cable length least.
 
 ## Bill of materials (prototype)
 
 | Ref | Part | Qty | Role / notes |
 | --- | --- | --- | --- |
-| U1 | Seeed XIAO ESP32-S3 | 1 | MCU, BLE 5, native USB-C, onboard 1S LiPo charger. 21 × 17.8 mm. |
-| U2 | ams AS5600, SOIC-8 | 1 | 12-bit magnetic angle sensor, I2C 0x36. Run at 3.3 V (VDD5V tied to VDD3V3). A breakout board is fine for the first bench test. |
+| U1 | Seeed XIAO ESP32-S3 (SKU 113991114, or tape-and-reel 100092361 for reflow) | 1 | MCU, BLE 5, native USB-C, onboard 1S LiPo charger (SGM40567). 21 × 17.8 mm. Battery pads are on the underside. |
+| U2 | ams AS5600-ASOM, SOIC-8 | 1 | 12-bit magnetic angle sensor, I2C 0x36. Run at 3.3 V (VDD5V tied to VDD3V3). A breakout board is fine for the first bench test. |
 | M1 | Diametric NdFeB magnet, Ø6 × 2.5 mm | 1 | Pressed into the Inner Hinge boss tip, centred on the axis. |
-| U3, U4 | ST LSM6DSOX 6-axis IMU, LGA-14 | 2 | Shin (U3, SA0 = 1 → 0x6B, on the hinge board) and thigh (U4, SA0 = 0 → 0x6A, small thigh board). Breakouts are fine for the first bench test. |
+| U3, U4 | ST LSM6DSOXTR 6-axis IMU, LGA-14 | 2 | Shin (U3, SA0 = 1 → 0x6B, on the hinge board) and thigh (U4, SA0 = 0 → 0x6A, small thigh board). Breakouts are fine for the first bench test. |
 | C1–C7 | 100 nF ×6, 1 µF ×1 | 7 | Decoupling: C1/C2 on U2, C3/C4 on U3, C6/C7 on U4; C5 filters VBAT_SENSE. |
 | S1–S4 | Interlink FSR 402 (Ø12.7 mm active) | 4 | Fit/load pads: 2 on the thigh band inner face, 2 on the calf band. |
 | R1–R4 | 10 kΩ | 4 | FSR divider legs to GND. |
 | R5, R6 | 220 kΩ | 2 | VBAT divider (½ scale), ~10 µA drain. 100 nF from the midpoint to GND. |
 | R7, R8 | 2.2 kΩ | 2 | I2C pull-ups (cable to the thigh IMU adds capacitance; 400 kHz). |
 | BT1 | 1S LiPo 1000 mAh with protection circuit (PCM), ~50 × 34 × 5 mm (503450 size) | 1 | **Must** have a PCM. ~20 g. |
-| J1, J3 | JST-PH 8-pin | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_RAW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
-| J2 | JST-PH 3-pin | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
+| J1, J3 | JST-PH 8-pin (B8B-PH-K-S) | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_RAW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
+| J2 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
 | SW1 | Slide switch in BAT+ | 1 | Hard power-off, at the cell on the thigh side (rev B), so the harness is dead when off. |
-| F1 | PTC resettable fuse, 0.5 A hold, 1206 | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
+| F1 | PTC resettable fuse, 0.5 A hold, 1206 (exact part to be chosen) | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
+| J4 | JST-PH 2-pin (B2B-PH-K-S) | 1 | Battery plug on the thigh side, so the cell can be unplugged. |
 | R9–R12 | 1.5 kΩ | 4 | FSR series resistors (rev B): cap the ADC input at 2.87 V and limit harness fault current. |
 | — | 8-core silicone ribbon or 28 AWG silicone wire | ~0.5 m | Thigh-to-hinge bundle. |
 
@@ -70,13 +72,45 @@ All analog inputs are on ADC1, which keeps working while BLE is active. ADC2 con
 
 ## Schematic
 
-- KiCad 10 project: [`kicad/mk-brace-sensing.kicad_pro`](kicad/mk-brace-sensing.kicad_pro), one sheet. PDF: [`mk-brace-sensing-schematic.pdf`](mk-brace-sensing-schematic.pdf).
+- KiCad 10 project: [`kicad/mk-brace-sensing.kicad_pro`](kicad/mk-brace-sensing.kicad_pro), one sheet, rev B. PDF: [`mk-brace-sensing-schematic.pdf`](mk-brace-sensing-schematic.pdf).
 - The sheet is split into the hinge board, the thigh side of the harness and the calf FSRs. Parts connect by net label; J1 and J3 are the two ends of the same 8-way harness.
-- Project symbols for the XIAO ESP32-S3, AS5600 and LSM6DSOX are in [`kicad/MKBrace.kicad_sym`](kicad/MKBrace.kicad_sym); KiCad's stock library has none of them. Check their pinouts against the datasheets before PCB layout. The XIAO has no footprint assigned yet.
-- ERC (2026-10-20): 0 errors, 21 warnings, all expected:
-  - 15 × "symbol doesn't match copy in library": the KiCad MCP server embedded its own copies of `Device:R` / `Device:C`. Fix in KiCad with *Tools → Update Symbols from Library*.
-  - 6 × "bidirectional connected to power output": the IMUs' SA0 and unused aux-I2C pins (SDx, SCx) tied to 3V3 or GND on purpose.
+- Project symbols for the XIAO ESP32-S3, AS5600 and LSM6DSOX are in [`kicad/MKBrace.kicad_sym`](kicad/MKBrace.kicad_sym); KiCad's stock library has none of them. See the checklist below for what each one has been verified against.
+- The XIAO footprint is Seeed's own `XIAO-ESP32-S3-SMD`, copied into `kicad/MKBrace.pretty/` from [Seeed-Studio/OPL_Kicad_Library](https://github.com/Seeed-Studio/OPL_Kicad_Library) under CC BY-SA 4.0. Its pads 23 and 24 are VBAT and GND, on the module's underside, so they need reflow or hand-soldered wires. The other underside pads stay unconnected.
+- BT1, SW1 and the FSRs (S1–S4) have no footprint: they are wired off-board.
+- ERC (2026-11-01, `kicad-cli`): 0 errors, 6 warnings, all intended: "bidirectional connected to power output" on the IMUs' SA0 and unused aux-I2C pins (SDx, SCx), tied to 3V3 or GND on purpose as ST specifies.
 - The KiCad MCP server's library *search* finds nothing on KiCad 10. It only knows the 8.0/9.0 install paths and cuts URIs at spaces (`C:/Program Files/...`). Placing parts by `Library:Symbol` name still works.
+
+## Pre-fabrication checklist
+
+From the external design review (rev A), updated for rev B.
+
+| Item | Status |
+| --- | --- |
+| AS5600 3.3 V supply and capacitors | **Verified** against the datasheet: VDD5V and VDD3V3 tied together with 100 nF. C2 (1 µF) is extra and harmless; the 10 µF is only for one-time programming, which this design doesn't use. |
+| AS5600 DIR, PGO, OUT | **Verified**: DIR tied to GND (it must sit at GND or VDD); PGO has an internal pull-up and OUT is unused. |
+| I2C addresses, CS | **Correct by design**: 0x36, 0x6A, 0x6B, CS high. Confirm with an I2C scan at bring-up. |
+| LSM6DSOX symbol and footprint vs. purchased part | **Partly verified.** Pin numbers and unused-pin handling match ST's AN5192 for the sister LSM6DSO. **Open:** check against ST's LSM6DSOX datasheet (DS12814); st.com blocks scripted downloads. |
+| XIAO pins 1–14 | **Verified** against Seeed's KiCad symbol and footprint. D0–D3 and D8 are ADC1-capable per Seeed's pin map. |
+| XIAO battery pads | **Verified and corrected in rev B** to pads 23 (VBAT) and 24 (GND). |
+| Switch and charging behaviour | **Open:** charging decision below. Battery PCM ratings are unknown until a cell is chosen. |
+| Connector pin 1, polarization, strain relief | **Partly done:** JST-PH is keyed. Pin-1 marking is a layout item, strain relief a mechanical one. |
+| KiCad ERC | **Done:** 0 errors, 6 intended warnings. |
+| FSR outputs at min and max resistance | **Calculated:** 0 V open, 2.82 V at 200 Ω (2.87 V at 0 Ω), inside the 0–2.9 V range at 12 dB. Bench-check with real sensors. |
+| FSR_EN drive | **Verified:** 1.15 mA at most against a 20 mA default GPIO drive. |
+| ADC range and settling | **Verified on paper:** VBAT_SENSE tops out at 2.1 V. The source impedance is 110 kΩ with 100 nF, about 11 ms time constant, so allow settling after power-up. Use ADC calibration. |
+| I2C bus with the real harness | **Open (bench):** start at 100 kHz, check rise times with a scope, then raise the speed. Pull-ups draw 1.5 mA per line when low. |
+| AS5600 magnet check | **Open (bench):** read STATUS (0x0B) MD/ML/MH and AGC to confirm field strength and gap. Axis must be within 0.25 mm of the package centre. |
+| Measure idle, sampling, BLE and peak current | **Open (bench):** the 35 mA MCU figure is still an estimate. |
+
+The 3.5 V firmware cutoff is a low-battery warning, not protection; the cell's PCM is the hardware protection. Voltage under load reads lower than resting voltage.
+
+## Open decision: how the battery charges
+
+The XIAO's charger would take roughly 10–20+ hours on a 1000 mAh cell, and it also means plugging USB in at the hinge. Options:
+
+1. **Unplug the cell at J4 and charge it off the brace** with a 500 mA single-cell charger. No schematic change, and it can't happen while worn. (Recommended for the prototype.)
+2. **Add a dedicated charger on the thigh board** next to the cell, with its own USB port. Charges in the brace, adds parts.
+3. **Accept the slow charge** for early bench work only.
 
 ## Power budget
 
@@ -98,7 +132,7 @@ Sizing:
 - × 1.3 margin on the MCU estimate = **~850 mAh → 1000 mAh cell**
 - Expected runtime at the design load: 1000 × 0.8 / 43 ≈ **18 h**, or about 12 h even if the MCU draws 60 mA.
 
-Charging: the XIAO's onboard charger is a low-current linear charger (check the exact rate against the Seeed schematic), so a 1000 mAh cell will take many hours. Plan on overnight charging, or add a dedicated 500 mA charger on the hinge board later.
+Charging: the XIAO's onboard charger is a small linear charger. Seeed's wiki table appears to list 50 mA for this board and 100 mA for the Plus, and resellers disagree, so measure it. A 1000 mAh cell would take roughly 10–20+ hours that way, which is not practical for daily use. See the open decision below.
 
 ## Mechanical integration (input to the Fusion mount design)
 

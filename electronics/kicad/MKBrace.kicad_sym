@@ -18,7 +18,7 @@
         (font (size 1.27 1.27))
       )
     )
-    (property "Footprint" ""
+    (property "Footprint" "MKBrace:XIAO-ESP32-S3-SMD"
       (at 0 -5.08 0)
       (effects
         (font (size 1.27 1.27))
@@ -61,7 +61,7 @@
         (name "BAT+"
           (effects (font (size 1.27 1.27)))
         )
-        (number "15"
+        (number "23"
           (effects (font (size 1.27 1.27)))
         )
       )
@@ -141,7 +141,7 @@
         (name "BAT-"
           (effects (font (size 1.27 1.27)))
         )
-        (number "16"
+        (number "24"
           (effects (font (size 1.27 1.27)))
         )
       )
