@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Jonny Terrero",
+  "description": {
+    "": "Builds the FDM-printable connectors and hinges (run after build_frames)."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

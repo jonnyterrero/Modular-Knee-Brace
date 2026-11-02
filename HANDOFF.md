@@ -1,15 +1,27 @@
 # Handoff — where the MK-Brace work stands
 
-_Last updated 2026-10-20 by Claude Code (Opus 5.5). Session logs: [`docs/progress/`](docs/progress/) (latest: [`2026-10-20-electronics-plan-and-schematic.md`](docs/progress/2026-10-20-electronics-plan-and-schematic.md))._
+_Last updated 2026-11-01 by Claude Code (Opus 5.5). Session logs: [`docs/progress/`](docs/progress/) (latest: [`2026-11-01-printable-hinges-and-connectors.md`](docs/progress/2026-11-01-printable-hinges-and-connectors.md))._
 
 Read this first when picking the project back up, and update it at the end of every session.
 
 ## Current state
 
-- **Phase 1 (mechanical): Fusion rebuild done.** The brace is a 10-part Fusion 360 assembly: two parametric frames plus exact copies of the original connectors and hinges, with fit checked at every joint.
-- **Fusion cloud:** project **Knee brace Design** holds the design **Modular Knee Brace** (v2) and the folder **SolidWorks originals** (the 9 converted reference parts). Save new Fusion work in this project, never in *Default Project*.
+- **Phase 1 (mechanical): Fusion rebuild done.** The brace is a 10-part Fusion 360 assembly built from scripts: two frames, four connectors and four hinge parts, redesigned for FDM printing on 2026-11-01.
+- **Fusion cloud:** project **Knee brace Design** holds the design **Modular Knee Brace** (v3) and the folder **SolidWorks originals** (the 9 converted reference parts). Save new Fusion work in this project, never in *Default Project*.
 - **Repo:** exports and scripts in [`cad/fusion/`](cad/fusion/README.md); engineering notes in [`docs/fusion-rebuild.md`](docs/fusion-rebuild.md); the reference SolidWorks set in [`cad/solidworks-final/`](cad/solidworks-final/); drawings in [`docs/drawings/`](docs/drawings/).
-- **Print-ready:** `cad/fusion/stl/` (millimetres). Print the Outer Hinge twice.
+- **Print files:** `cad/fusion/stl/` (millimetres); quantities and orientations are in `cad/fusion/README.md`.
+
+## Printability rework (2026-11-01, awaiting a test print)
+
+The original hinges could not be printed and assembled: a 1.3 mm per-side snap interference through a solid ring, and near-zero gaps. The connectors, hinges and frame sockets were redesigned; see [`docs/progress/2026-11-01-printable-hinges-and-connectors.md`](docs/progress/2026-11-01-printable-hinges-and-connectors.md) and [`cad/fusion/README.md`](cad/fusion/README.md). 3D printing is a prototype stage; real parts come later.
+
+Open:
+
+- The printer's layer cap and model are still unknown. Frames are 381 layers at 0.2 mm (254 at 0.3), the tallest parts by far.
+- There is no slicer on the dev machine, so nothing has been sliced or printed. Print one hinge pair first.
+- The 180° frame wrap has not been checked on the wearer.
+
+Electronics is paused until this is proven.
 
 ## Next up: electronics (Phase 2, sensing)
 
@@ -45,5 +57,5 @@ Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split pla
 ## Known issues
 
 - The frames lack the originals' small edge rounds and end-block draft (cosmetic).
-- Connectors and hinges don't follow the frame parameters (copied geometry).
-- About 0.003 in press fit on one side of each hinge seat, inherited from the originals.
+- Hinge and connector dimensions are read when `build_print_parts` runs, so they need a re-run after a parameter change.
+- Changing the frame half-angles in place breaks the strap bridge references; rebuild with the scripts.

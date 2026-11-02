@@ -1,6 +1,7 @@
 """Exports the Modular Knee Brace design: Fusion archive, STEP assembly, one STL per part (mm) and preview renders."""
 
 import os
+import re
 
 import adsk.core
 import adsk.fusion
@@ -40,7 +41,9 @@ def export_stls(design: adsk.fusion.Design, out_dir: str) -> list:
         if component.name in seen or component.bRepBodies.count == 0:
             continue
         seen.add(component.name)
-        path = os.path.join(stl_dir, component.name.lower().replace(' ', '-') + '.stl')
+        # Fusion suffixes names like 'Outer Hinge (2)' when an older component with that name lingers.
+        name = re.sub(r' \(\d+\)$', '', component.name)
+        path = os.path.join(stl_dir, name.lower().replace(' ', '-') + '.stl')
         options = manager.createSTLExportOptions(component.bRepBodies.item(0), path)
         options.isBinaryFormat = True
         options.meshRefinement = adsk.fusion.MeshRefinementSettings.MeshRefinementHigh

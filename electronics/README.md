@@ -105,8 +105,8 @@ Charging: the XIAO's onboard charger is a low-current linear charger (check the 
 Measured from the Fusion model (2026-10-20):
 
 - The hinge axis is lateral (X). Each stack is about 0.66 in wide; the Outer Hinge's outer face is at |X| ≈ 3.02 in, centred on the knee axis (Y = −6.0, Z = −0.5 in).
-- The Inner Hinge carries a solid central boss on the axis; that is where the magnet goes. The Outer Hinge closes over it with a solid Ø2.00 in cap about **0.125 in (3.2 mm)** thick.
-- The AS5600 needs a ~0.5–3 mm magnet-to-die gap. 3.2 mm of PETG plus clearance is too far, so the mount needs a **Ø0.40 in pocket in the outside of the cap leaving ≤ 0.03 in (0.8 mm) floor**, with the sensor IC centred over it. The rotation stop and snap fit stay as they are.
+- Updated 2026-11-01 for the printable hinge: the Inner Hinge's hollow snap post (Ø0.36 in bore) comes up through an open bore in the Outer Hinge's cap, so no thin-floor pocket is needed. A plug holding the Ø6 mm magnet can press into the post, which would also lock the snap fingers. The sensor mounts over the bore on the cap's outer face.
+- The AS5600 needs a ~0.5–3 mm magnet-to-die gap, with the magnet axis within 0.25 mm of the package centre. A printed mount may not hold 0.25 mm, so check it with the sensor's magnet-status bits.
 - The hinge enclosure (XIAO + AS5600 + shin IMU, about 30 × 25 × 12 mm inside) clips over the Outer Hinge cap on the **lateral** side only, so nothing faces the other leg. Keep the USB-C port reachable.
 - Battery holder on the thigh frame: the band is 2.00 in tall and carries a 1.50 in strap recess. A 34 × 50 mm cell must not block the strap path, so check the end block or upper connector area before committing. On the band's outside (R ≈ 3.4 in) a 50 mm flat cell leaves ~3.6 mm sagitta, so the holder needs a curved base.
 

@@ -9,9 +9,9 @@ CM_PER_IN = 2.54
 
 PARAMETERS = (
     ('top_frame_id', '5.75 in', 'in', 'Top frame inner diameter (thigh fit)'),
-    ('top_frame_half_angle', '82.5 deg', 'deg', 'Half of the top frame wrap angle'),
+    ('top_frame_half_angle', '90 deg', 'deg', 'Half of the top frame wrap angle; 90 deg squares the sockets to the hinge plane'),
     ('bottom_frame_id', '4.50 in', 'in', 'Bottom frame inner diameter (calf fit)'),
-    ('bottom_frame_half_angle', '80 deg', 'deg', 'Half of the bottom frame wrap angle'),
+    ('bottom_frame_half_angle', '90 deg', 'deg', 'Half of the bottom frame wrap angle; 90 deg squares the sockets to the hinge plane'),
     ('frame_height', '2.00 in', 'in', 'Frame band height along the leg'),
     ('frame_wall', '0.50 in', 'in', 'Frame band radial thickness'),
     ('strap_recess_height', '1.50 in', 'in', 'Strap recess and strap slot height'),
@@ -22,7 +22,7 @@ PARAMETERS = (
     ('tab_thickness', '0.25 in', 'in', 'Connector tab thickness'),
     ('tab_length', '1.00 in', 'in', 'Connector tab length'),
     ('fit_clearance', '0.01 in', 'in', 'Clearance per side between tabs and sockets'),
-    ('socket_flare_depth', '0.319 in', 'in', 'Depth of the flared socket mouth that seats the R0.5 tab root'),
+    ('socket_flare_depth', '0 in', 'in', 'Depth of an optional flared socket mouth; 0 leaves a flat shoulder for the connector to butt against'),
     ('lip_thickness', '0.125 in', 'in', 'Strap bridge (lip) thickness over the end-block strap slot'),
 )
 
@@ -344,7 +344,8 @@ def build_frame(design: adsk.fusion.Design, comp: adsk.fusion.Component, id_para
     recess_input.participantBodies = [body]
     extrudes.add(recess_input).name = 'Strap recess'
 
-    add_socket_flares(comp, rings, sockets, body)
+    if p('socket_flare_depth') > 0:
+        add_socket_flares(comp, rings, sockets, body)
     add_gussets(comp, r_in, r_out)
     add_strap_bridges_and_slots(comp, outer_block_lines(rings, r_out, length), p('lip_thickness'), p('strap_recess_depth'))
     return comp.bRepBodies.item(0)
