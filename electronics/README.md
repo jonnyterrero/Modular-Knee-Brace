@@ -16,7 +16,7 @@ Parts selection, architecture, power budget and schematics for the sensing build
 ```
             THIGH SEGMENT                    │ joint │            SHIN SEGMENT
                                              │       │
-  [1S LiPo 1000 mAh, PCM]─J4─F1─SW1─VBAT_SW/GND┼──┐    │
+  [1S LiPo 1200 mAh, PCM]─J4─F1─SW1─VBAT_SW/GND┼──┐    │
   [Thigh IMU LSM6DSOX 0x6A] ──3V3/GND/SDA/SCL┼──┤    │  Hinge enclosure (on Outer Hinge cap)
   [FSR T1] [FSR T2] ──FSR_EN/T1/T2───────────┼──┤    │   ├─ XIAO ESP32-S3 (MCU, BLE, USB-C, charger)
                                              │  └────┼──►├─ AS5600 encoder (on hinge axis)
@@ -43,14 +43,14 @@ Parts selection, architecture, power budget and schematics for the sensing build
 | R1–R4 | 10 kΩ | 4 | FSR divider legs to GND. |
 | R5, R6 | 220 kΩ | 2 | VBAT divider (½ scale), ~10 µA drain. 100 nF from the midpoint to GND. |
 | R7, R8 | 2.2 kΩ | 2 | I2C pull-ups (cable to the thigh IMU adds capacitance; 400 kHz). |
-| BT1 | 1S LiPo 1000 mAh with protection circuit (PCM), ~50 × 34 × 5 mm (503450 size) | 1 | **Must** have a PCM. ~20 g. |
+| BT1 | Adafruit 258: 1S LiPo 1200 mAh with PCM, 62 × 34 × 5 mm, 23 g, JST-PH lead (PKCELL LP-503562) | 1 | **Must** have a PCM. Cuts out at 3.0 V, protects against output shorts. 1.2 A max continuous discharge. |
 | J1, J3 | JST-PH 8-pin (B8B-PH-K-S) | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_SW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
 | J5 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Thigh FSRs: FSR_EN, FSR_T1, FSR_T2. |
 | J2 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
-| SW1 | Slide switch in BAT+, C&K PCM12 footprint (pad 3 unused) | 1 | Hard power-off on the thigh board, so the harness is dead when off. Confirm the exact part's current rating covers peak draw, and that the enclosure leaves it reachable. |
-| F1 | PTC resettable fuse, 0.5 A hold, 1206 (exact part to be chosen) | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
+| SW1 | C&K PCM12SMTR: SMT slide switch, 300 mA at 6 VDC (pad 3 unused) | 1 | Hard power-off on the thigh board, so the harness is dead when off. Needs the firmware TX limit below. The enclosure must leave it reachable. |
+| F1 | Littelfuse 1206L050YR: PTC fuse, 0.5 A hold, 1 A trip, 6 VDC, 1206 | 1 | At the cell, ahead of SW1: limits current if the harness is shorted. Hold current falls to 0.42 A at about 40 °C, still above the peak draw below. |
 | J4 | JST-PH 2-pin (B2B-PH-K-S) | 1 | Battery plug on the thigh side, so the cell can be unplugged to charge. |
-| — | Single-cell LiPo charger, 4.2 V CC/CV, 500 mA, JST-PH lead (off-brace, not on the schematic) | 1 | Charges the cell off the brace. Check polarity first. |
+| — | Adafruit 4410: Micro-Lipo charger, USB-C (off-brace, not on the schematic) | 1 | Charges the cell off the brace. Defaults to 100 mA; **solder its jumper closed for 500 mA**. |
 | R9–R12 | 1.5 kΩ | 4 | FSR series resistors (rev B): cap the ADC input at 2.87 V and limit harness fault current. |
 | — | 8-core silicone ribbon or 28 AWG silicone wire | ~0.5 m | Thigh-to-hinge bundle. |
 
@@ -101,7 +101,8 @@ From the external design review (rev A), updated for rev B.
 | LSM6DSOX symbol and footprint vs. purchased part | **Partly verified.** Pin numbers and unused-pin handling match ST's AN5192 for the sister LSM6DSO. **Open:** check against ST's LSM6DSOX datasheet (DS12814); st.com blocks scripted downloads. |
 | XIAO pins 1–14 | **Verified** against Seeed's KiCad symbol and footprint. D0–D3 and D8 are ADC1-capable per Seeed's pin map. |
 | XIAO battery pads | **Verified and corrected in rev B** to pads 23 (VBAT) and 24 (GND). |
-| Switch and charging behaviour | **Decided:** the cell charges off the brace, unplugged at J4. **Open:** battery PCM ratings are unknown until a cell is chosen. |
+| Switch and charging behaviour | **Decided:** the cell charges off the brace, unplugged at J4. **Partly verified:** the cell's datasheet has no PCM overcurrent figure; Adafruit gives only the 3.0 V cutoff and short protection. F1 covers harness faults regardless. |
+| Peak current vs. switch and fuse | **Verified on paper with a firmware rule:** see *Peak current* below. Measure on the bench. |
 | Connector pin 1, polarization, strain relief | **Partly done:** JST-PH is keyed. Pin-1 marking is a layout item, strain relief a mechanical one. |
 | KiCad ERC | **Done:** 0 errors on both boards, 3 intended warnings each. |
 | Harness pinout across the two boards | **Done:** `check_harness.py` compares J1 and J3 pin for pin. |
@@ -118,8 +119,8 @@ The 3.5 V firmware cutoff is a low-battery warning, not protection; the cell's P
 
 **Unplug the cell at J4 and charge it off the brace** with a separate charger. The XIAO's own charger would take roughly 10–20+ hours on a 1000 mAh cell, and this way the brace can't be charging while worn.
 
-- **Charger:** single-cell LiPo, CC/CV to 4.2 V, 500 mA (0.5C for 1000 mAh, about 2–2.5 hours). Don't use a charger set above 1C (1 A).
-- **Polarity:** JST-PH battery wiring isn't standardized between vendors. Check the cell's polarity with a meter against J4 and against the charger before the first connection. A reversed cell can destroy the electronics or the cell.
+- **Charger:** Adafruit 4410 with its jumper soldered closed for 500 mA, which Adafruit gives as the maximum for this cell. A full charge takes about 3 hours. Charge between 0 and 45 °C.
+- **Polarity:** Adafruit says this cell matches its own chargers, which is why they're paired. JST-PH battery wiring isn't standardized between vendors, so **J4 is the risk**: check the cell's polarity with a meter against J4's pins before the first connection, and mark + on the silkscreen in layout. A reversed cell can destroy the electronics or the cell.
 - **USB during firmware work:** the XIAO's charger will still top up the cell slowly if USB is plugged in with SW1 on. That's fine on the bench, but turn SW1 off or unplug J4 if you don't want that. Never do it while worn.
 
 ## Power budget
@@ -139,8 +140,19 @@ Sizing:
 
 - 43 mA × 12 h = 520 mAh delivered
 - ÷ 0.8 usable (firmware cutoff at 3.5 V for 3.3 V regulator headroom, plus ageing) = 650 mAh
-- × 1.3 margin on the MCU estimate = **~850 mAh → 1000 mAh cell**
-- Expected runtime at the design load: 1000 × 0.8 / 43 ≈ **18 h**, or about 12 h even if the MCU draws 60 mA.
+- × 1.3 margin on the MCU estimate = **~850 mAh needed; the chosen cell is 1200 mAh**
+- Expected runtime at the design load: 1200 × 0.8 / 43 ≈ **22 h**, or about 14 h even if the MCU draws 60 mA.
+
+### Peak current
+
+The average is small, but the switch and fuse see the radio's peaks. ESP32-S3 datasheet (table 5-8, at 3.3 V, 100% duty): Bluetooth LE TX peaks at **335 mA at 21 dBm, 193 mA at 9 dBm** and 176 mA at 0 dBm. Referred to the battery at 3.5 V, assuming about 85% regulator efficiency and 10 mA for the sensors:
+
+| BLE TX power | Peak at the battery | vs. SW1 (300 mA) | vs. F1 hold (0.42 A at about 40 °C) |
+| --- | --- | --- | --- |
+| 9 dBm | about 225 mA | OK | OK |
+| 21 dBm | about 380 mA | **Over** | Close |
+
+**Firmware rule: limit BLE TX to 9 dBm or less, and don't transmit Wi-Fi at full power on battery.** F1's resistance (up to about 0.75 Ω on its family's datasheet) also drops the battery rail by up to about 0.17 V during those peaks, so read VBAT_SENSE between transmissions. These peaks are worst-case figures, so measure them on the bench.
 
 Charging: the XIAO's onboard charger is a small linear charger. Seeed's wiki table appears to list 50 mA for this board and 100 mA for the Plus, and resellers disagree. Either way it's too slow for daily use, so the cell charges off the brace; see *Charging* above.
 
@@ -152,7 +164,7 @@ Measured from the Fusion model (2026-10-20):
 - Updated 2026-11-01 for the printable hinge: the Inner Hinge's hollow snap post (Ø0.36 in bore) comes up through an open bore in the Outer Hinge's cap, so no thin-floor pocket is needed. A plug holding the Ø6 mm magnet can press into the post, which would also lock the snap fingers. The sensor mounts over the bore on the cap's outer face.
 - The AS5600 needs a ~0.5–3 mm magnet-to-die gap, with the magnet axis within 0.25 mm of the package centre. A printed mount may not hold 0.25 mm, so check it with the sensor's magnet-status bits.
 - The hinge enclosure (XIAO + AS5600 + shin IMU, about 30 × 25 × 12 mm inside) clips over the Outer Hinge cap on the **lateral** side only, so nothing faces the other leg. Keep the USB-C port reachable.
-- Battery holder on the thigh frame: the band is 2.00 in tall and carries a 1.50 in strap recess. A 34 × 50 mm cell must not block the strap path, so check the end block or upper connector area before committing. On the band's outside (R ≈ 3.4 in) a 50 mm flat cell leaves ~3.6 mm sagitta, so the holder needs a curved base.
+- Battery holder on the thigh frame: the band is 2.00 in tall and carries a 1.50 in strap recess. The 34 × 62 × 5 mm cell must not block the strap path, so check the end block or upper connector area before committing. On the band's outside (R ≈ 3.4 in) the cell's 62 mm flat length leaves about 5.6 mm sagitta, so the holder needs a curved base. It's a flexible pouch cell: support it fully and don't let it bend.
 
 ## Safety (not a medical device)
 

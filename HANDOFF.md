@@ -37,8 +37,8 @@ Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split pla
      - ERC still 0 errors; netlist re-checked; PDF re-exported.
    - Still to do:
      - Verify the LSM6DSOX pinout against ST's DS12814 (a person needs to download it; st.com blocks scripted access). It has only been checked against the LSM6DSO's AN5192 Table 1.
-     - Choose the exact PTC, battery cell and charger. Charging is decided: unplug the cell at J4 and charge off the brace (`electronics/README.md`).
-     - Done 2026-11-02: split into hinge and thigh board projects under `electronics/kicad/`. Scope confirmed as sensing only. Next: pick the parts above, then lay out the boards.
+     - Parts chosen 2026-11-02: Adafruit 258 cell, Littelfuse 1206L050YR fuse, C&K PCM12SMTR switch, Adafruit 4410 charger. **Firmware must limit BLE TX to 9 dBm or less** (`electronics/README.md`, *Peak current*).
+     - Done 2026-11-02: split into hinge and thigh board projects under `electronics/kicad/`. Scope confirmed as sensing only. Next: lay out the boards once the hinge test print settles the mounting.
      - Also done since: XIAO battery pads corrected to 23/24 with Seeed's footprint, ERC down to the 6 intended warnings, checklist in `electronics/README.md`.
    - Datasheet facts confirmed so far:
      - AS5600 (Infineon-hosted ams datasheet): in 3.3 V mode tie VDD5V and VDD3V3 together with 100 nF. 10 µF is needed only for OTP programming. Airgap 0.5–3 mm. **Magnet axis within 0.25 mm of package centre** (drives the Fusion mount tolerance). STATUS register 0x0B holds MD/ML/MH.

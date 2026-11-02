@@ -20,5 +20,5 @@ The user confirmed the full build is sensing only, so it comes down to two PCBs.
 ## Not done
 
 - No PCB layout yet. Board sizes depend on the battery cell and the printed hinge.
-- Parts still to choose: cell, PTC, charger, and the exact switch.
+- Parts chosen the same day; see `2026-11-02-parts-selection.md`.
 - The LSM6DSOX pinout is still checked only against the sister LSM6DSO.
