@@ -1,0 +1,8 @@
+{
+  "board": {
+    "filename": "hinge-board.kicad_pcb"
+  },
+  "sheets": [
+    ["root", "hinge-board.kicad_sch"]
+  ]
+}

@@ -1,4 +1,0 @@
-(fp_lib_table
-	(version 7)
-	(lib (name "MKBrace") (type "KiCad") (uri "${KIPRJMOD}/MKBrace.pretty") (options "") (descr "XIAO ESP32-S3 footprint from Seeed-Studio/OPL_Kicad_Library, CC BY-SA 4.0"))
-)

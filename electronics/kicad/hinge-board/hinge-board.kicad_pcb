@@ -8,8 +8,8 @@
 	)
 	(paper "A4")
 	(title_block
-		(title "mk-brace-sensing")
-		(date "2026-10-20")
+		(title "hinge-board")
+		(date "2026-11-01")
 	)
 	(layers
 		(0 "F.Cu" signal)

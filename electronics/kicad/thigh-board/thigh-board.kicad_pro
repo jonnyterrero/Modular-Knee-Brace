@@ -1,0 +1,8 @@
+{
+  "board": {
+    "filename": "thigh-board.kicad_pcb"
+  },
+  "sheets": [
+    ["root", "thigh-board.kicad_sch"]
+  ]
+}

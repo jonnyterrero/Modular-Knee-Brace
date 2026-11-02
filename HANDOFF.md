@@ -28,7 +28,7 @@ Electronics continues in parallel; the mount design waits on a printed hinge pai
 Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split placement** (MCU, encoder and shin IMU at the lateral hinge; LiPo on the thigh frame), **PETG** prototype. Parts, pin map and power budget are in [`electronics/README.md`](electronics/README.md): XIAO ESP32-S3, AS5600 + Ø6 mm diametric magnet on the hinge axis, 2× LSM6DSOX, 4× FSR 402, 1000 mAh protected 1S LiPo (~43 mA design load, ~18 h expected).
 
 1. ~~Choose parts and write a power budget.~~ Done.
-2. ~~Draw the schematic in KiCad.~~ Done: [`electronics/kicad/`](electronics/kicad/), PDF in `electronics/`, ERC 0 errors. Before layout: in KiCad run *Tools → Update Symbols from Library*, check the three project symbols against their datasheets, and assign a XIAO footprint.
+2. ~~Draw the schematics in KiCad.~~ Done: two boards in [`electronics/kicad/`](electronics/kicad/), PDFs in `electronics/`, ERC 0 errors. Run `python electronics/check_harness.py` after changing either one.
    **Rev B (2026-10-20, finished 2026-11-01 apart from the items below)** after an external design review:
    - Done:
      - SW1 and a PTC fuse (F1) moved to the cell, so the harness is dead when off.
@@ -38,7 +38,7 @@ Decided 2026-10-20: **sensing only (no e-stim)**, **~12 h runtime**, **split pla
    - Still to do:
      - Verify the LSM6DSOX pinout against ST's DS12814 (a person needs to download it; st.com blocks scripted access). It has only been checked against the LSM6DSO's AN5192 Table 1.
      - Choose the exact PTC, battery cell and charger. Charging is decided: unplug the cell at J4 and charge off the brace (`electronics/README.md`).
-     - Then split the sheet into separate boards for the full build (hinge board, thigh board).
+     - Done 2026-11-02: split into hinge and thigh board projects under `electronics/kicad/`. Scope confirmed as sensing only. Next: pick the parts above, then lay out the boards.
      - Also done since: XIAO battery pads corrected to 23/24 with Seeed's footprint, ERC down to the 6 intended warnings, checklist in `electronics/README.md`.
    - Datasheet facts confirmed so far:
      - AS5600 (Infineon-hosted ams datasheet): in 3.3 V mode tie VDD5V and VDD3V3 together with 100 nF. 10 µF is needed only for OTP programming. Airgap 0.5–3 mm. **Magnet axis within 0.25 mm of package centre** (drives the Fusion mount tolerance). STATUS register 0x0B holds MD/ML/MH.

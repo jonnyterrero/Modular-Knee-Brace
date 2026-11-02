@@ -45,6 +45,6 @@ MK-Brace is a modular, 3D-printed, parametric knee brace (EGN 3433C course proje
 - `design.analyzeInterference` returned `None`, and temporary-BRep intersections fail (`ASM_EDGECOIN`) on flush mating faces.
 - `doc.save()` reports the previous version number until the upload finishes.
 
-## Electronics (next)
+## Electronics
 
-Planned: ESP32, hinge-axis magnetic encoder, thigh and shin IMUs, pressure sensors, LiPo battery, BLE/USB. Put schematics, BOM and firmware under a new `electronics/` folder. A KiCad MCP server is configured on the dev machine.
+Sensing only: XIAO ESP32-S3, hinge-axis magnetic encoder, thigh and shin IMUs, pressure sensors, LiPo battery, BLE/USB. Two KiCad projects under `electronics/kicad/` (hinge and thigh boards) share `electronics/kicad/lib/`; parts, power budget and the review checklist are in `electronics/README.md`. Run `python electronics/check_harness.py` after changing either schematic. A KiCad MCP server is configured on the dev machine.

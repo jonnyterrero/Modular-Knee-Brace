@@ -26,4 +26,4 @@ A tidy script of mine damaged the schematic during this session by matching too 
 
 - Check the LSM6DSOX pinout against ST's DS12814. st.com blocks scripted access, and the mirrors tried either failed or held a different part. It has only been checked against the sister LSM6DSO (AN5192).
 - Choose the exact PTC, cell and charger.
-- Split the sheet into separate boards for the full build.
+- Split the sheet into separate boards for the full build. Done 2026-11-02: see `2026-11-02-two-board-split.md`.

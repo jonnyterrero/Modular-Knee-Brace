@@ -1,6 +1,6 @@
 # Electronics — Phase 2 (sensing)
 
-Parts selection, architecture, power budget and schematic for the first sensing build. Firmware comes next and goes in this folder.
+Parts selection, architecture, power budget and schematics for the sensing build. The scope is sensing only. Firmware comes later and goes in this folder.
 
 ## Scope decisions (2026-10-20)
 
@@ -44,9 +44,10 @@ Parts selection, architecture, power budget and schematic for the first sensing 
 | R5, R6 | 220 kΩ | 2 | VBAT divider (½ scale), ~10 µA drain. 100 nF from the midpoint to GND. |
 | R7, R8 | 2.2 kΩ | 2 | I2C pull-ups (cable to the thigh IMU adds capacitance; 400 kHz). |
 | BT1 | 1S LiPo 1000 mAh with protection circuit (PCM), ~50 × 34 × 5 mm (503450 size) | 1 | **Must** have a PCM. ~20 g. |
-| J1, J3 | JST-PH 8-pin (B8B-PH-K-S) | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_RAW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
+| J1, J3 | JST-PH 8-pin (B8B-PH-K-S) | 2 | Thigh harness, hinge end (J1) and thigh end (J3): VBAT_SW, GND, 3V3, SDA, SCL, FSR_EN, FSR_T1, FSR_T2. |
+| J5 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Thigh FSRs: FSR_EN, FSR_T1, FSR_T2. |
 | J2 | JST-PH 3-pin (B3B-PH-K-S) | 1 | Calf FSRs: FSR_EN, FSR_C1, FSR_C2. |
-| SW1 | Slide switch in BAT+ | 1 | Hard power-off, at the cell on the thigh side (rev B), so the harness is dead when off. |
+| SW1 | Slide switch in BAT+, C&K PCM12 footprint (pad 3 unused) | 1 | Hard power-off on the thigh board, so the harness is dead when off. Confirm the exact part's current rating covers peak draw, and that the enclosure leaves it reachable. |
 | F1 | PTC resettable fuse, 0.5 A hold, 1206 (exact part to be chosen) | 1 | At the cell, ahead of SW1: limits current if the harness is shorted (rev B). |
 | J4 | JST-PH 2-pin (B2B-PH-K-S) | 1 | Battery plug on the thigh side, so the cell can be unplugged to charge. |
 | — | Single-cell LiPo charger, 4.2 V CC/CV, 500 mA, JST-PH lead (off-brace, not on the schematic) | 1 | Charges the cell off the brace. Check polarity first. |
@@ -73,12 +74,19 @@ All analog inputs are on ADC1, which keeps working while BLE is active. ADC2 con
 
 ## Schematic
 
-- KiCad 10 project: [`kicad/mk-brace-sensing.kicad_pro`](kicad/mk-brace-sensing.kicad_pro), one sheet, rev B. PDF: [`mk-brace-sensing-schematic.pdf`](mk-brace-sensing-schematic.pdf).
-- The sheet is split into the hinge board, the thigh side of the harness and the calf FSRs. Parts connect by net label; J1 and J3 are the two ends of the same 8-way harness.
-- Project symbols for the XIAO ESP32-S3, AS5600 and LSM6DSOX are in [`kicad/MKBrace.kicad_sym`](kicad/MKBrace.kicad_sym); KiCad's stock library has none of them. See the checklist below for what each one has been verified against.
-- The XIAO footprint is Seeed's own `XIAO-ESP32-S3-SMD`, copied into `kicad/MKBrace.pretty/` from [Seeed-Studio/OPL_Kicad_Library](https://github.com/Seeed-Studio/OPL_Kicad_Library) under CC BY-SA 4.0. Its pads 23 and 24 are VBAT and GND, on the module's underside, so they need reflow or hand-soldered wires. The other underside pads stay unconnected.
-- BT1, SW1 and the FSRs (S1–S4) have no footprint: they are wired off-board.
-- ERC (2026-11-01, `kicad-cli`): 0 errors, 6 warnings, all intended: "bidirectional connected to power output" on the IMUs' SA0 and unused aux-I2C pins (SDx, SCx), tied to 3V3 or GND on purpose as ST specifies.
+Two boards, each its own KiCad 10 project, because KiCad has one PCB per project. Both are rev A of the split, carrying over everything from the single-sheet rev B.
+
+| Board | Project | PDF | Carries |
+| --- | --- | --- | --- |
+| Hinge | [`kicad/hinge-board/`](kicad/hinge-board/) | [PDF](hinge-board-schematic.pdf) | XIAO, AS5600, shin IMU, FSR dividers, battery sense, I2C pull-ups, J1 (harness), J2 (calf FSRs) |
+| Thigh | [`kicad/thigh-board/`](kicad/thigh-board/) | [PDF](thigh-board-schematic.pdf) | Thigh IMU, J4 (battery), F1, SW1, J3 (harness), J5 (thigh FSRs) |
+
+- J1 and J3 are the two ends of the same 8-wire harness, and nothing in KiCad links them across projects. Run `python electronics/check_harness.py` after changing either schematic; it fails if the pinouts differ.
+- Project symbols for the XIAO ESP32-S3, AS5600 and LSM6DSOX are in [`kicad/lib/MKBrace.kicad_sym`](kicad/lib/MKBrace.kicad_sym), shared by both projects; KiCad's stock library has none of them. See the checklist below for what each one has been verified against.
+- The XIAO footprint is Seeed's own `XIAO-ESP32-S3-SMD`, copied into `kicad/lib/MKBrace.pretty/` from [Seeed-Studio/OPL_Kicad_Library](https://github.com/Seeed-Studio/OPL_Kicad_Library) under CC BY-SA 4.0. Its pads 23 and 24 are VBAT and GND, on the module's underside, so they need reflow or hand-soldered wires. The other underside pads stay unconnected.
+- BT1 and the FSRs (S1–S4) are off-board, wired to J4, J5 and J2. They're marked not-on-board, so they stay in the schematic and BOM but won't appear on the PCB.
+- ERC (2026-11-02, `kicad-cli`): 0 errors on both boards, and 3 warnings each, all intended: "bidirectional connected to power output" on each IMU's SA0 and unused aux-I2C pins (SDx, SCx), tied to 3V3 or GND on purpose as ST specifies.
+- The split was checked against the single-sheet netlist: the only change is J5 added to the thigh FSR nets.
 - The KiCad MCP server's library *search* finds nothing on KiCad 10. It only knows the 8.0/9.0 install paths and cuts URIs at spaces (`C:/Program Files/...`). Placing parts by `Library:Symbol` name still works.
 
 ## Pre-fabrication checklist
@@ -95,7 +103,8 @@ From the external design review (rev A), updated for rev B.
 | XIAO battery pads | **Verified and corrected in rev B** to pads 23 (VBAT) and 24 (GND). |
 | Switch and charging behaviour | **Decided:** the cell charges off the brace, unplugged at J4. **Open:** battery PCM ratings are unknown until a cell is chosen. |
 | Connector pin 1, polarization, strain relief | **Partly done:** JST-PH is keyed. Pin-1 marking is a layout item, strain relief a mechanical one. |
-| KiCad ERC | **Done:** 0 errors, 6 intended warnings. |
+| KiCad ERC | **Done:** 0 errors on both boards, 3 intended warnings each. |
+| Harness pinout across the two boards | **Done:** `check_harness.py` compares J1 and J3 pin for pin. |
 | FSR outputs at min and max resistance | **Calculated:** 0 V open, 2.82 V at 200 Ω (2.87 V at 0 Ω), inside the 0–2.9 V range at 12 dB. Bench-check with real sensors. |
 | FSR_EN drive | **Verified:** 1.15 mA at most against a 20 mA default GPIO drive. |
 | ADC range and settling | **Verified on paper:** VBAT_SENSE tops out at 2.1 V. The source impedance is 110 kΩ with 100 nF, about 11 ms time constant, so allow settling after power-up. Use ADC calibration. |
