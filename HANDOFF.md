@@ -1,6 +1,6 @@
 # Handoff — where the MK-Brace work stands
 
-_Last updated 2026-11-01 by Claude Code (Opus 5.5). Session logs: [`docs/progress/`](docs/progress/) (latest: [`2026-11-01-printable-hinges-and-connectors.md`](docs/progress/2026-11-01-printable-hinges-and-connectors.md))._
+_Last updated 2026-11-11 by Claude Code (Opus 5.5). Engineering notes: [`docs/progress/`](docs/progress/). The 2026-10-20 to 11-02 session's log, decisions, tooling notes and open items: [`docs/sessions/`](docs/sessions/README.md); start with [`open-items.md`](docs/sessions/open-items.md)._
 
 Read this first when picking the project back up, and update it at the end of every session.
 

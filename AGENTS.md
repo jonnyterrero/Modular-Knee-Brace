@@ -25,6 +25,7 @@ MK-Brace is a modular, 3D-printed, parametric knee brace (EGN 3433C course proje
 | `docs/fusion-rebuild.md` | Measured dimensions, assembly layout, fit check, corrections |
 | `docs/drawings/` | Dimensioned drawings and design sketches from the course report |
 | `docs/progress/` | Dated session logs |
+| `docs/sessions/` | Session log, decisions, tooling lessons and open items carried over from sessions run outside this folder |
 
 ## Fusion 360 via MCP
 
