@@ -3,7 +3,7 @@
 ## Waiting on the user
 
 - [ ] **Printer details:** model and layer cap. The frames are 381 layers at 0.2 mm (254 at 0.3), by far the tallest parts. If they're over the cap, shorten `block_drop` / `frame_height`. The Top Frame's footprint is 178 × 111 mm.
-- [ ] **Hinge test print:** one `right-inner-hinge.stl` (base face down) and one `outer-hinge.stl` (cap face down). Report the snap and the motion; tune `hinge_clearance` / `snap_interference` from that.
+- [ ] **Hinge test print:** send `cad/fusion/print/` (print-oriented STLs and a settings sheet, added 2026-11-13) and print the hinge pair first. Report the snap and the motion; tune `hinge_clearance` / `snap_interference` from that.
 - [ ] **LSM6DSOX datasheet (DS12814)** from st.com, saved into the repo, so the symbol's pinout can be checked against the real part rather than the sister LSM6DSO.
 - [ ] **Frame fit on the wearer** with the 180° wrap.
 

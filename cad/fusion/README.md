@@ -10,7 +10,8 @@ Parametric Fusion 360 rebuild of the MK-Brace (October 2026). The live design is
 | --- | --- |
 | `Modular-Knee-Brace.f3d` | Fusion archive with the full timeline, user parameters and all 10 parts (*File → Open → Open from my computer*) |
 | `Modular-Knee-Brace.step` | Neutral STEP of the whole assembly in its assembled position |
-| `stl/` | One binary STL per part, in **millimetres**, ready to slice |
+| `stl/` | One binary STL per part, in **millimetres**, in model orientation (as exported) |
+| `print/` | **Send this to the printer:** the same STLs on their print faces, plus print settings and quantities ([`print/README.md`](print/README.md)) |
 | `scripts/` | Fusion API scripts that rebuild, measure and export the design |
 
 ### Parts and print quantities
@@ -86,6 +87,7 @@ The SolidWorks originals stay in `cad/solidworks-final/` for reference; [`docs/f
 | `place_original_parts` | Superseded. Copies the original connectors and hinges, which cannot be printed and assembled as designed |
 | `measure_part` | Prints size, volume, cylinder diameters and planar-face offsets of every body |
 | `export_brace` | Writes the `.f3d`, `.step`, `stl/` and the `docs/images/fusion/` renders back into this repo |
+| `orient_for_print.py` | Plain Python, no Fusion needed. Turns `stl/` into the print-oriented `print/` package and checks every mesh is closed. Run after each export |
 
 Run one from Fusion: *Utilities → Add-Ins → Scripts and Add-Ins → + (Script) → select its folder → Run*.
 
