@@ -26,4 +26,4 @@
 
 - [ ] `modular-knee-brace-package/files/Left_Hinge_Innerfinal-Static 1.LOG` shows as deleted locally but was never committed. Commit or restore it.
 - [ ] `dev/` is an untracked folder that this session didn't create; review it.
-- [ ] Claude's saved memory for this project lives with the `integrations&automations` folder. Copy it to this folder's project memory if sessions will start here from now on.
+- [x] Claude's saved memory for this project was copied into this folder's project memory on 2026-11-13, so sessions started here have it.
